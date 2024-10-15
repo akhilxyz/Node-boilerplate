@@ -18,3 +18,17 @@ export const HeadersSchema = z.object({
     required_error: "api-access-token is required",
   }), // Example:
 });
+
+// Zod schema to validate query parameters
+export const paginationSchema = z.object({
+  page: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : 1)) // Default to 1 if not provided
+    .refine((val) => !isNaN(val) && val > 0, { message: "Page must be a positive number" }),
+  limit: z
+    .string()
+    .optional()
+    .transform((val) => (val ? parseInt(val, 10) : 10)) // Default to 10 if not provided
+    .refine((val) => !isNaN(val) && val > 0, { message: "Limit must be a positive number" }),
+});

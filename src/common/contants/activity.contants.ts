@@ -6,28 +6,12 @@ export enum USER_MESSAGES {
   ERROR_TO_CREATE_USER = "error to create user",
   EMAIL_NOT_EXIST = "email does not exists",
   INCORRECT_PASSWORD = "Incorrect Password",
-  LOGIN = "Log In",
-  LOGOUT = "Logout",
-}
-export enum BLOCKCHAIN_MESSAGES {
-  NO_BLOCKCHAIN_MESSAGES_FOUND = "No Blockchain found",
-  BLOCKCHAIN_FOUND = "All Blockchain found",
-  EMAI_EXIST = "email already exists",
-  USER_CREATED = "User created successfully",
-  ERROR_TO_CREATE_USER = "error to create user",
-  EMAIL_NOT_EXIST = "email does not exists",
-  INCORRECT_PASSWORD = "Incorrect Password",
-  LOGIN = "Log In",
+  LOGIN = "Logged in",
   LOGOUT = "Logout",
 }
 
-export enum CROSSPLATFORM_MESSAGES {
-  NO_PLATFORM_FOUND = "No crosschain platform found",
-  PLATFORM_FOUND = "All crosschain platform found",
-}
-
-
-export enum RAMP_MESSAGES {
-  NO_RAMP_FOUND = "No ramp platform found",
-  RAMP_FOUND = "All ramp platform found",
+export enum JWT_MESSAGES {
+  INVALID_ACCESS_TOKEN = "Access token is missing or invalid",
+  VARIFICATION_FAILED = "JWT verification failed: invalid token",
+  TOKEN_EXPIRED = "JWT token is expired"
 }

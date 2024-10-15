@@ -3,8 +3,9 @@ import { handleServiceResponse } from "@/common/utils";
 import type { Request, RequestHandler, Response } from "express";
 
 class UserController {
-  public getUsers: RequestHandler = async (_req: Request, res: Response) => {
-    const serviceResponse = await userService.findAll();
+  public getUsers: RequestHandler = async (req: Request, res: Response) => {
+    const { limit, offset } = req.pagination!;
+    const serviceResponse = await userService.findAll({ limit, offset });
     return handleServiceResponse(serviceResponse, res);
   };
 

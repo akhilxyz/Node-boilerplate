@@ -58,7 +58,7 @@ function expressRouter(apiMethods: unknown, registry: Registry, router: Router):
         };
       }
       if (params) request_.params = params;
-      if (query) register.query = query;
+      if (query) request_.query = query;
       if (headers) request_.headers = headers;
 
       register.request = request_;

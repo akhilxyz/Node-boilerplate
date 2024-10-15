@@ -16,6 +16,8 @@
     "forceConsistentCasingInFileNames": true,
     "types": ["vitest/globals"]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*" ,
+   "src/common/types/**/*.d.ts" // Make sure custom types are included
+],
   "exclude": ["node_modules"]
 }

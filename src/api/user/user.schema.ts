@@ -1,52 +1,47 @@
-import { sequelize } from "@/common/db/sequelize"; // Ensure you have your sequelize instance configured here
-import { schemaName } from "@/common/utils";
-import { DataTypes, Model } from "sequelize";
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
+import { z } from "zod";
 
-class User extends Model {
-  // Remove public class fields declarations
+import { commonValidations } from "@/common/utils";
 
-  // You can still use TypeScript for type-checking if needed
-  // Define a type for the model attributes
-  declare id: number;
-  declare name: string;
-  declare email: string;
-  declare password: string;
-  declare phone: number; // Changed to string to match the schema definition
-  declare status: number;
-}
+extendZodWithOpenApi(z);
 
-User.init(
-  {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
-    name: {
-      type: new DataTypes.STRING(128),
-      allowNull: false,
-    },
-    email: {
-      type: new DataTypes.STRING(128),
-      allowNull: false,
-    },
-    password: {
-      type: new DataTypes.STRING(128),
-      allowNull: false,
-    },
-    phone: {
-      type: new DataTypes.STRING(128),
-      allowNull: false,
-    },
-    status: {
-      type: new DataTypes.INTEGER(),
-      allowNull: true,
-    },
-  },
-  {
-    tableName: schemaName.user,
-    sequelize, // passing the `sequelize` instance is required
-  },
-);
+export type User = z.infer<typeof UserSchema>;
 
-export default User;
+export const UserSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  email: z.string().email(),
+  password: z.string(),
+  phone: z.number(),
+  status: z.number(),
+});
+
+// Input Validation for 'GET users/:id' endpoint
+// Input Validation for 'GET users/:id' endpoint
+export const GetUserSchema = z.object({
+  params: z.object({ id: commonValidations.id }),
+});
+
+export const AddUserSchemaBody = z.object({
+  body: z
+    .object({
+      name: z.string({ invalid_type_error: "Invalid name", required_error: "Name is required" }),
+      phone: z.string({ invalid_type_error: "Invalid phone no", required_error: "phone is required" }),
+      password: z.string({ invalid_type_error: "Invalid password", required_error: "password is required" }),
+      email: z
+        .string({ invalid_type_error: "Invalid email", required_error: "email is required" })
+        .email({ message: "Invalid email format" }),
+    })
+    .required(),
+});
+
+export const LoginSchemaBody = z.object({
+  body: z
+    .object({
+      email: z
+        .string({ invalid_type_error: "Invalid email", required_error: "email is required" })
+        .email({ message: "Invalid email format" }),
+      password: z.string({ invalid_type_error: "Invalid password", required_error: "password is required" }),
+    })
+    .required(),
+});

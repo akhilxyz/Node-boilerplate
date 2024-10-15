@@ -1,11 +1,9 @@
-import fs from "node:fs";
-import path from "node:path";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 
-// Path to the package.json file
-const packageJsonPath = path.join(__dirname, "../../../package.json");
-
-// Read and parse package.json
-const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+const packageJsonPath = join(process.cwd(), 'package.json');
+const packageJsonData = readFileSync(packageJsonPath, 'utf-8');
+const packageJson = JSON.parse(packageJsonData);
 
 const memory = {
   MEMORY_HEAP_USAGE_THRESHOLD: 0.8,

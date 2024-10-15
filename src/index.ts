@@ -2,22 +2,39 @@ import { appInfo } from "@/common/utils";
 import { app, logger } from "@/server";
 import { env } from "./config/envConfig";
 
-const server = app.listen(env.PORT, () => {
-  const { NODE_ENV, HOST, PORT } = env;
-  logger.info(`Server (${NODE_ENV}) running on port http://${HOST}:${PORT}`);
-  console.log(
-    `\n 🌼 Wallet app ${appInfo.version} Server \n\n╰╮\n\n ╰─ ✔︎ [ 2 ] ${appInfo.name} are enabled. \n\n  ❤︎ ᴀᴘᴘ ɪꜱ ʟɪꜱᴛᴇɴɪɴɢ ᴏɴ ᴘᴏʀᴛ ${PORT}\n\n `,
-  );
+const { NODE_ENV, HOST, PORT } = env;
+
+const server = app.listen(PORT, () => {
+  logger.info(`Server (${NODE_ENV}) running on http://${HOST}:${PORT}`);
+  console.log(`
+    🎉  Welcome to Our Application!
+    ================================
+    
+    Version: ${appInfo.version}
+    Application Name: ${appInfo.name}
+    Environment: ${NODE_ENV}
+    Host: ${HOST}
+    Listening on Port: ${PORT}
+
+    ✔︎ All services are enabled and running smoothly. 
+    Thank you for using our application! 
+
+    ================================
+    🚀 Let's get started! 🚀
+    `);
 });
 
-const onCloseSignal = () => {
-  logger.info("sigint received, shutting down");
+const gracefulShutdown = (signal: string) => {
+  logger.info(`${signal} received, shutting down server`);
   server.close(() => {
-    logger.info("server closed");
+    logger.info("Server closed");
     process.exit();
   });
-  setTimeout(() => process.exit(1), 10000).unref(); // Force shutdown after 10s
+
+  // Force shutdown after 10 seconds if graceful shutdown doesn't complete
+  setTimeout(() => process.exit(1), 10000).unref();
 };
 
-process.on("SIGINT", onCloseSignal);
-process.on("SIGTERM", onCloseSignal);
+["SIGINT", "SIGTERM"].forEach((signal) =>
+  process.on(signal, () => gracefulShutdown(signal))
+);

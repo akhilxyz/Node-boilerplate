@@ -1,4 +1,4 @@
-import type { User } from "@/api/user/user.model";
+import type { User } from "@/api/user/user.schema";
 import { UserRepository } from "@/api/user/user.repository";
 import { GLOBAL_MESSAGES, USER_MESSAGES } from "@/common/contants/index";
 import { ServiceResponse } from "@/common/models/serviceResponse";
@@ -14,9 +14,9 @@ export class UserService {
   }
 
   // Retrieves all users from the database
-  async findAll(): Promise<ServiceResponse<User[] | null>> {
+  async findAll({ limit, offset }: { limit: number; offset: number }): Promise<ServiceResponse<User[] | null>> {
     try {
-      const users = await this.userRepository.findAllAsync();
+      const users = await this.userRepository.findAllAsync({ limit, offset });
       if (!users || users.length === 0) {
         return ServiceResponse.failure(USER_MESSAGES.NO_USER_FOUND, null, StatusCodes.NOT_FOUND);
       }
@@ -60,7 +60,7 @@ export class UserService {
   async create(data: any): Promise<ServiceResponse<User | null>> {
     try {
       const { email, password } = data;
-      if (!(await this.userRepository.findByEmailAsync(email))) {
+      if ((await this.userRepository.findByEmailAsync(email))) {
         return ServiceResponse.failure(USER_MESSAGES.EMAI_EXIST, null, StatusCodes.NOT_FOUND);
       }
       data.password = await cryptoEngine.encrypt(password);
@@ -68,7 +68,7 @@ export class UserService {
       if (!user) {
         return ServiceResponse.failure(USER_MESSAGES.ERROR_TO_CREATE_USER, null, StatusCodes.NOT_FOUND);
       }
-      return ServiceResponse.success<User>(USER_MESSAGES.USER_CREATED, user);
+      return ServiceResponse.success(USER_MESSAGES.USER_CREATED, null);
     } catch (ex) {
       const errorMessage = `Error creating user: ${(ex as Error).message}`;
       logger.error(errorMessage);

@@ -1,5 +1,5 @@
 {
-  "name": "wallet-app",
+  "name": "express-app",
   "version": "1.0.14",
   "description": "An Express boilerplate backend",
   "author": "akhil choudhary",
@@ -7,7 +7,6 @@
   "main": "index.ts",
   "private": true,
   "scripts": {
-    "seed": "tsx seeds/seed.ts",
     "dev": "tsx watch --clear-screen=false src/index.ts | pino-pretty",
     "build": "tsup",
     "start": "node dist/index.js",

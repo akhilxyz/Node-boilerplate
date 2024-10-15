@@ -1,9 +1,9 @@
-import type { User } from "@/api/user/user.model";
-import users from "@/api/user/user.schema";
+import type { User } from "@/api/user/user.schema";
+import users from "@/api/user/user.model";
 
 export class UserRepository {
-  async findAllAsync(): Promise<User[] | null> {
-    return (await users.findAll({ attributes: { exclude: ["password"] } })) || null;
+  async findAllAsync({ limit, offset }: { limit: number; offset: number }): Promise<User[] | null> {
+    return (await users.findAll({ attributes: { exclude: ["password"] } , limit, offset  })) || null;
   }
 
   async findByIdAsync(id: number): Promise<User | null> {

@@ -8,7 +8,7 @@ import helmet from "helmet";
 import { pino } from "pino";
 import "colors";
 import { checkConnection } from "@/common/db/sequelize";
-import { API } from "./common/contants";
+import { API } from "@/common/contants";
 
 (async () => {
   await checkConnection();
