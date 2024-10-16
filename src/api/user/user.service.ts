@@ -103,6 +103,23 @@ export class UserService {
       return ServiceResponse.failure(GLOBAL_MESSAGES.ERROR_USER_LOGIN, null, StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
+
+
+  /**
+   * Uploads files to the server.
+   * @param files - An array of Express.Multer.File objects representing the uploaded files.
+   * @returns A Promise that resolves to a ServiceResponse object containing the following:
+   * @throws An error if the file upload process fails.
+   */
+  async upload(files : []): Promise<ServiceResponse<{filePaths : string[]} | null>> {
+    try {
+      const filePaths = files.map((file: Express.Multer.File) => file.path); // Get paths of uploaded files
+      return ServiceResponse.success(USER_MESSAGES.FILE_UPLOAD, { filePaths });
+    } catch (ex) {
+      logger.error(`Error upload file: ${(ex as Error).message}`);
+      return ServiceResponse.failure(GLOBAL_MESSAGES.ERROR_WHILE_UPLOADING, null, StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
 
 export const userService = new UserService();

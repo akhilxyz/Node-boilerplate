@@ -19,6 +19,31 @@ export const HeadersSchema = z.object({
   }), // Example:
 });
 
+// Zod schema for a single file upload
+export const fileSchema = z.object({
+  fieldname: z.string(),       // Field name specified in the form
+  originalname: z.string(),    // Original name of the uploaded file
+  encoding: z.string(),        // File encoding type (e.g., '7bit')
+  mimetype: z.string(),        // MIME type of the file (e.g., 'image/png')
+  size: z.number().max(5 * 1024 * 1024), // File size (max 5MB for this example)
+  destination: z.string(),     // Destination folder where the file is saved
+  filename: z.string(),        // Name of the file saved on the server
+  path: z.string(),            // Full path to the uploaded file
+  buffer: z.any().optional(),  // Optional buffer if file is not stored in memory
+});
+
+
+// Zod schema for validating request body
+export const fileUploadBodySchema = z.object({
+  file: z
+  .instanceof(Buffer)
+  .or(z.array(z.instanceof(Buffer))) // File or files from FormData (buffers in the case of multer)
+  .optional(),
+  files: z
+  .instanceof(Buffer)
+  .or(z.array(z.instanceof(Buffer))) // File or files from FormData (buffers in the case of multer)
+  .optional(),});
+
 // Zod schema to validate query parameters
 export const paginationSchema = z.object({
   page: z

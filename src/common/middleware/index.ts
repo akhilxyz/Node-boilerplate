@@ -3,5 +3,6 @@ import errorHandler from "@/common/middleware/errorHandler.middleware";
 import validateJwtToken from "@/common/middleware/jwtValidator.middleware";
 import rateLimiter from "@/common/middleware/rateLimiter.middleware";
 import requestLogger from "@/common/middleware/requestLogger.middleware";
+import uploadFilesMiddleware from "@/common/middleware/uploadFiles.middleware";
 
-export { apiLogger, errorHandler, rateLimiter, requestLogger, validateJwtToken };
+export {  errorHandler, rateLimiter, requestLogger, validateJwtToken , apiLogger, uploadFilesMiddleware };

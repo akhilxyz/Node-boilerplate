@@ -8,6 +8,7 @@ export enum USER_MESSAGES {
   INCORRECT_PASSWORD = "Incorrect Password",
   LOGIN = "Logged in",
   LOGOUT = "Logout",
+  FILE_UPLOAD = "File Uploaded Successfully",
 }
 
 export enum JWT_MESSAGES {

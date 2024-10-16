@@ -9,6 +9,9 @@ declare global {
                 limit: number;
                 offset: number;
             };
+            user?: {
+                id: number;
+            }; // Assuming User is your user model type
         }
     }
 }

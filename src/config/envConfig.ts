@@ -67,4 +67,9 @@ export const env = cleanEnv(process.env, {
     desc: "the JWT secret is required",
     example: "my-secret",
   }),
+  ENC_SECRET: str({
+    devDefault: testOnly("my-secret-32_characters_long"),
+    desc: "the ENC SECRET secret is required 32 bytes",
+    example: "my-secret",
+  }),
 });

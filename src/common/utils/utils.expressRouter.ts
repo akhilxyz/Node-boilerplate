@@ -39,7 +39,7 @@ function expressRouter(apiMethods: unknown, registry: Registry, router: Router):
   // Validate the apiMethods using Zod
   const parsedApiMethods = ApiMethodsSchema.parse(apiMethods);
 
-  parsedApiMethods.forEach(({ method, path, tags, request, responses, middleware, handler }) => {
+  parsedApiMethods.forEach(({ method, path, tags, request, responses, middleware, handler } :any) => {
     let path_ = API.BASE_URL + path;
 
     const register: any = { method, path: path_, tags, responses };
@@ -64,7 +64,9 @@ function expressRouter(apiMethods: unknown, registry: Registry, router: Router):
       register.request = request_;
     }
 
-    registry.registerPath(register);
+    if(request && responses) {
+      registry.registerPath(register);
+    }
     path_ = path.replace(/{(.*?)}/g, ":$1");
     const middlewares = Array.isArray(middleware) ? middleware : middleware ? [middleware] : [];
     (router as any)[method](path_, ...middlewares, handler);

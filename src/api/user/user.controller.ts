@@ -24,6 +24,12 @@ class UserController {
     const serviceResponse = await userService.loginUser(req.body);
     return handleServiceResponse(serviceResponse, res);
   };
+
+  public upload: RequestHandler = async (req: Request, res: Response) => {
+    const files  :any = req.files || [req.file]; // Get files or single file
+    const serviceResponse = await userService.upload(files);
+     return handleServiceResponse(serviceResponse, res);
+  };
 }
 
 export const userController = new UserController();

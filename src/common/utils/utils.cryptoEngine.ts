@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import { env } from "@/config/envConfig";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-const key = crypto.randomBytes(32);
+
 
 /**
  * Encrypts data using bcrypt.
@@ -31,33 +31,48 @@ async function compare(data: string, hashedData: string): Promise<boolean> {
   }
 }
 
-/**
- * Encrypts a text using AES-256-CBC encryption with a provided key and a randomly generated IV.
- * The encrypted text is returned as a JSON object containing the IV and the encrypted data.
- * @param text - The text to be encrypted.
- * @returns An object containing the IV and the encrypted data.
- */
-function encryptEngine(text: string) {
-  const iv = crypto.randomBytes(16);
-  const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
-  let encrypted = cipher.update(text, "utf8", "base64");
-  encrypted += cipher.final("base64");
-  return { iv: iv.toString("base64"), encrypted };
-}
 
 /**
- * Decrypts a text using AES-256-CBC encryption with a provided key and IV.
- * The decrypted text is returned as a string.
- * @param encryptedText - The encrypted text to be decrypted.
- * @param iv - The initialization vector (IV) used during encryption.
- * @returns The decrypted text.
+ * Generates a JSON Web Token (JWT) by encrypting the payload using AES-256-CBC encryption.
+ * The encrypted payload and IV are embedded in the JWT payload.
+ * @param payload - The data to be encrypted and embedded in the JWT.
+ * @returns A signed JWT token.
  */
-function decryptEngine(encryptedText: string, iv: string) {
-  const decipher = crypto.createDecipheriv("aes-256-cbc", key, Buffer.from(iv, "base64"));
-  let decrypted = decipher.update(encryptedText, "base64", "utf8");
-  decrypted += decipher.final("utf8");
-  return decrypted;
+function generateJwt(payload: any) {
+  const encryptedData = encryptEngine(payload); // Encrypt the payload
+  return jwt.sign(
+    { data: encryptedData }, // Store iv and encrypted data separately
+    env.JWT_SECRET,
+    { expiresIn: "1h" }
+  );
 }
+
+
+export function encryptEngine(obj: object): string {
+  const cipher = crypto.createCipheriv(
+    'aes-256-cbc',
+    Buffer.from(env.ENC_SECRET),
+    Buffer.from(env.ENC_SECRET.slice(0, 16)) // 16-byte IV (initialization vector)
+  );
+
+  let encrypted = cipher.update(JSON.stringify(obj), 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+
+  return encrypted;
+}
+
+// Function to decrypt an encrypted string back to an object
+export function decryptEngine(encrypted: string):  {id : number} {
+  const decipher = crypto.createDecipheriv(
+    'aes-256-cbc',
+    Buffer.from(env.ENC_SECRET),
+    Buffer.from(env.ENC_SECRET.slice(0, 16)) // 16-byte IV (initialization vector)
+  );
+  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return JSON.parse(decrypted);
+}
+
 
 /**
  * Verifies a JSON Web Token (JWT) using the provided secret key.
@@ -66,32 +81,12 @@ function decryptEngine(encryptedText: string, iv: string) {
  */
 function verifyJwt(token: string) {
   try {
-    const decoded = jwt.verify(token, env.JWT_SECRET);
+    const decoded: any = jwt.verify(token, env.JWT_SECRET);
     return decoded;
   } catch (err) {
-    console.error("JWT verification failed:");
+    console.error("JWT verification failed:", err);
     return null;
   }
 }
 
-function generateJwt(payload: any) {
-  const encryptJwt = encryptEngine(payload.toString());
-  const data = `${encryptJwt.iv}:${encryptJwt.encrypted}`;
-  return jwt.sign({ data }, env.JWT_SECRET, { expiresIn: "1h" });
-}
-
-function decodeJwt(data: string) {
-  try {
-    const splitString = data.split(":");
-    if (splitString.length !== 2) {
-      throw new Error("Invalid data format");
-    }
-    const iv = splitString[0];
-    const encrypted = splitString[1];
-    return decryptEngine(encrypted, iv); // Ensure
-  } catch (error) {
-    return null;
-  }
-}
-
-export const cryptoEngine = { encrypt, compare, Jwt: { generateJwt, decodeJwt, verifyJwt } };
+export const cryptoEngine = { encryptEngine, decryptEngine, compare, encrypt, Jwt: { generateJwt, verifyJwt } };

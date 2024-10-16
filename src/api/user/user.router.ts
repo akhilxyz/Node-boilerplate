@@ -2,10 +2,10 @@ import { createApiResponse } from "@/api-docs/openAPI.ResponseBuilders";
 import { userController } from "@/api/user/user.controller";
 import { AddUserSchemaBody, GetUserSchema, LoginSchemaBody, UserSchema } from "@/api/user/user.schema";
 import { API, MESSAGE, METHODS } from "@/common/contants";
-import { validateJwtToken } from "@/common/middleware";
+import { uploadFilesMiddleware, validateJwtToken } from "@/common/middleware";
 import { paginationMiddleware } from "@/common/middleware/pagination.middleware";
 import { HeadersSchema, expressRouter, validateRequest } from "@/common/utils";
-import { paginationSchema } from "@/common/utils/utils.commonValidation";
+import { fileSchema, fileUploadBodySchema, paginationSchema } from "@/common/utils/utils.commonValidation";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { z } from "zod";
@@ -41,10 +41,16 @@ const userApiPaths = [
     handler: userController.logIn,
   },
   {
+    method: POST,
+    path: `/${ROUTE}/upload`,
+    middleware: [uploadFilesMiddleware],
+    handler: userController.upload,
+  },
+  {
     method: GET,
     path: `/${ROUTE}/list`,
     tags: TAGS,
-    request: { query: paginationSchema, headers: HeadersSchema },
+    request: {headers: HeadersSchema , query: paginationSchema},
     responses: createApiResponse(z.array(UserSchema), MESSAGE.SUCCESS),
     middleware: [validateJwtToken, paginationMiddleware],
     handler: userController.getUsers,
