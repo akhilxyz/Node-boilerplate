@@ -1,14 +1,18 @@
-import routes from "@/api";
-import { openAPIRouter } from "@/api-docs/openAPI.Router";
-import { apiLogger, errorHandler, rateLimiter, requestLogger } from "@/common/middleware";
-import { env } from "@/config/envConfig";
-import cors from "cors";
+// module import
 import express, { type Express } from "express";
 import helmet from "helmet";
 import { pino } from "pino";
+import cors from "cors";
 import "colors";
+
+// file imports
 import { checkConnection } from "@/common/db/sequelize";
+import { env } from "@/config/envConfig";
+import { openAPIRouter } from "@/api-docs/openAPI.Router";
+import { apiLogger, errorHandler, rateLimiter, requestLogger } from "@/common/middleware";
 import { API } from "@/common/contants";
+import routes from "@/api";
+
 
 (async () => {
   await checkConnection();

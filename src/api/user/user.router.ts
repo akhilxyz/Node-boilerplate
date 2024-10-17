@@ -1,12 +1,12 @@
 import { createApiResponse } from "@/api-docs/openAPI.ResponseBuilders";
-import { userController } from "@/api/user/user.controller";
 import { AddUserSchemaBody, GetUserSchema, LoginSchemaBody, UserSchema } from "@/api/user/user.schema";
-import { API, MESSAGE, METHODS } from "@/common/contants";
 import { uploadFilesMiddleware, validateJwtToken } from "@/common/middleware";
 import { paginationMiddleware } from "@/common/middleware/pagination.middleware";
 import { HeadersSchema, expressRouter, validateRequest } from "@/common/utils";
-import { fileSchema, fileUploadBodySchema, paginationSchema } from "@/common/utils/utils.commonValidation";
+import { paginationSchema } from "@/common/utils/utils.commonValidation";
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
+import { userController } from "@/api/user/user.controller";
+import { API, MESSAGE, METHODS } from "@/common/contants";
 import { Router } from "express";
 import { z } from "zod";
 
@@ -41,12 +41,6 @@ const userApiPaths = [
     handler: userController.logIn,
   },
   {
-    method: POST,
-    path: `/${ROUTE}/upload`,
-    middleware: [uploadFilesMiddleware],
-    handler: userController.upload,
-  },
-  {
     method: GET,
     path: `/${ROUTE}/list`,
     tags: TAGS,
@@ -63,6 +57,12 @@ const userApiPaths = [
     responses: createApiResponse(UserSchema, MESSAGE.SUCCESS),
     middleware: [validateRequest(GetUserSchema), validateJwtToken],
     handler: userController.getUser,
+  },
+  {
+    method: POST,
+    path: `/${ROUTE}/upload`,
+    middleware: [uploadFilesMiddleware],
+    handler: userController.upload,
   },
 ];
 

@@ -26,9 +26,9 @@ class UserController {
   };
 
   public upload: RequestHandler = async (req: Request, res: Response) => {
-    const files  :any = req.files || [req.file]; // Get files or single file
+    const files: any = req.files || [req.file]; // Get files or single file
     const serviceResponse = await userService.upload(files);
-     return handleServiceResponse(serviceResponse, res);
+    return handleServiceResponse(serviceResponse, res);
   };
 }
 
